@@ -75,9 +75,16 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
+# pull the host, username, password from ENVIRONMENT VARIABLES;
+    # let's use easily change our config. when we run our app on different servers & we don't need to modify our source code
+    # This is useful when running app in production since we can upload our Dockerfile to a service like AWS ECS, or Kubernetes,
+        # and simply set our environment variables & our app should work
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS')
     }
 }
 

@@ -15,14 +15,14 @@ class AdminSiteTests(TestCase):
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             email='admin@javid.com',
-            password='pw12345'
+            password='password123'
         )
         # log admin into the client with force_login
         self.client.force_login(self.admin_user) # lets us not have to manually log the user in / can just use the force_login helper
         # create another user that we can use for listening, etc.
         self.user = get_user_model().objects.create_user(
-            email='tests@javid.com',
-            password='pass1234',
+            email='test@javid.com',
+            password='password123',
             name='Test user full name'
         )
 

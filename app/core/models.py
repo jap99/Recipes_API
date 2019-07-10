@@ -34,6 +34,9 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
         return user
 
 
+        
+
+
 
 class User(AbstractBaseUser, PermissionsMixin): # create user model
 
