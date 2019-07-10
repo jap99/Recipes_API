@@ -14,7 +14,7 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
         # **extra_fields -- takes any extra functions that are passed in and pass  them into extra fields so we can just add any additional
             # fields that we use with our user models
         """Creates and saves a new user"""
-        user = self.model(email=email, **extra_fields) # creates a new model.. passes the email first & then any extra fields we add
+        user = self.model(email=self.normalize_email(email), **extra_fields) # creates a new model.. passes the email first & then any extra fields we add
         user.set_password(password) # the correct way to pass a password
         user.save(using=self._db) # using=self._db <-- the way to do it to support multiple databases but it's good practice to keep it anyway
 
