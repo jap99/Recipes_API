@@ -26,6 +26,13 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_('Important dates'), {'fields': ('last_login',)})
     )
+    # customized to include our email & pw
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',), # the classes taht are assigned to the form. default is that it has a wide class
+            'fields': ('email', 'password1', 'password2')
+        }),
+    )
 
     # register in the django admin
 admin.site.register(models.User, UserAdmin) # register our UserAdmin to the model that's passed in

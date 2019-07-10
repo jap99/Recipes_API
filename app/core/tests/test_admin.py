@@ -52,3 +52,12 @@ class AdminSiteTests(TestCase):
 
         # test the page renders okay
         self.assertEqual(res.status_code, 200)
+
+
+
+    def test_the_add_user_page_renders_correctly(self):
+        """Test that the create user page works"""
+        url = reverse('admin:core_user_add') # this is the standard alias for our add page for our user model
+        res = self.client.get(url) # our test client makes an http GET request to this url
+
+        self.assertEqual(res.status_code, 200)
