@@ -10,3 +10,19 @@ services:
       - ./app:/app
     command: >
      sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db # when ur in the app service, u can connect to the hostname db & it'll connect to the container running on our db service
+      - DB_NAME=app # must equal our postgres db - which is 'app'
+      - DB_USER=postres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - db
+
+
+
+  db:
+    image: postgres:10-alpine # gets the postgres image on dockerhub that has the tag 10-alpine
+    environment: # documention shows the settings you can set via environment variables - we'll set some for the username, db name, & pw that's created when our db service starts
+      - POSTGRES_DB=app # the postres container expects POSTGRES_DB to be all uppercase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword # wouldn't use the same pw here that you'd use on a production system; for production, on whatever is building your application like Travis or Jenkins - you'd add an encrypted variable that override this when you push your application
