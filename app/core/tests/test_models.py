@@ -14,4 +14,4 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(user.email, email)
-        self.assertTrue(user.check_password(password)) # check_password comes with django 
+        self.assertTrue(user.check_password(password)) # check_password comes with django
