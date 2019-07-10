@@ -18,3 +18,16 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
     user.save(using=self._db) # using=self._db <-- the way to do it to support multiple databases but it's good practice to keep it anyway
 
     return user # returns the user model that was just created
+
+
+    class User(AbstractBaseUser, PermissionsMixin): # create user model
+        """Custom user model that supports using email instead of username"""
+        email = models.EmailField(max_length=255, unique=True) # we want it unique so only user for one email
+        name = model.CharField(max_length=255)
+        is_active = models.BooleanField(default=True) # determines if the user's active or not - in case deactivated
+        is_staff = models.BooleanField(default=False)
+
+        """Assign the user manager to the objects attribute"""
+        objects = UserManager()
+
+        USERNAME_FIELD = 'email' # by default the USERNAME_FIELD is username; now it's email
