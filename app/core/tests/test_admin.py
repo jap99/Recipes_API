@@ -38,3 +38,17 @@ class AdminSiteTests(TestCase):
 
         self.assertContains(res, self.user.name) # assertContains is a django assertion; checks our response contains something & is code 200
         self.assertContains(res, self.user.email)
+
+
+
+
+    # don't need to test making a post to the change page because it's part of the django admin model
+        # and it's not recommended to test the dependencies of your project; Django tests their own code
+    def test_user_changed_page(self):
+        """Test that the user edit page works"""
+        url = reverse('admin:core_user_change', args=[self.user.id]) # give it an argument
+        # /admin/core/user/id_of_user ^
+        res = self.client.get(url)
+
+        # test the page renders okay
+        self.assertEqual(res.status_code, 200)
