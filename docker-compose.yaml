@@ -26,3 +26,7 @@ services:
       - POSTGRES_DB=app # the postres container expects POSTGRES_DB to be all uppercase
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=supersecretpassword # wouldn't use the same pw here that you'd use on a production system; for production, on whatever is building your application like Travis or Jenkins - you'd add an encrypted variable that override this when you push your application
+
+
+
+# consider adding a redis service 
