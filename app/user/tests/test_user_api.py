@@ -10,7 +10,9 @@ from rest_framework import status # module that has status codes // makes tests 
 
 
 CREATE_USER_URL = reverse('user:create') # based on the app & URL in urls.py // app = user // will look in the 'user' app for a url called 'create' 
-   
+TOKEN_URL = reverse('user:token')
+
+
 def create_user(**params):  # can pass in many params // dynamic list of args.  # this method is used to easily create a user when the test requires that a user already exists (for example: test_user_exists()).
     return get_user_model().objects.create_user(**params)
    
@@ -63,6 +65,36 @@ class PublicUserAPITests(TestCase):
         """User with that email doesn't exist"""
         self.assertFalse(user_exists)                                       
 
+
+# TOKENS
+
+    def test_token_was_created_for_user(self):
+        payload = {'email': 'test@cleandev.com', 'password': 'testpass'}
+        create_user(**payload)
+        response = self.client.post(TOKEN_URL, payload) 
+        # should get status 200 & a token in response
+        self.assertIn('token', response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_token_not_created_for_invalid_credentials(self):
+        create_user(email='javid@cleandev.com', password='testpass')
+        payload = {'email': 'javid@cleandev.com', 'password': 'wrongpass'}
+        response = self.client.post(TOKEN_URL, payload)
+        # since creds in payload were wrong we shouldn't get back a token in the response
+        self.assertNotIn('token', response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_token_not_created_for_nonexistant_user(self):
+        payload = {'email': 'javid@cleandev.com', 'password': 'testpass'}
+        response = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('token', response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_token_not_created_if_password_was_not_provided_in_textfield(self):
+        response = self.client.post(TOKEN_URL, {'email': 'anthing', 'password': ''})
+        # No token should be provided
+        self.assertNotIn('token', response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 
