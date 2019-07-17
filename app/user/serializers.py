@@ -1,3 +1,5 @@
+"""THE SERIALIZER IS USED TO CREATE THE OBJECT"""
+
 # this is where we'll store the serializers for our User model/class
     # we'll need to import our get_user_model to access our User model/class
 from django.contrib.auth import get_user_model 
