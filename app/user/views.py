@@ -4,7 +4,7 @@ from user.serializers import UserSerializer, AuthTokenSerializer
 
 # We'll use the create api view that comes with django rest_framework 
 #   - lets us easily make an API that creates an object in the db that uses the serializer we'll provide
-from rest_framework import generics 
+from rest_framework import generics, authentication, permissions
 
 # if we're authenticating with standard method username and pw we can pass the ObtainAuthToken view to our URLs
     # since we're customizing it slightly, we need to import it into our views, extend it with a class, & modify some of the class variables
@@ -39,3 +39,21 @@ class CreateTokenView(ObtainAuthToken):
         # import api_settings; use default ones
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
     # side note - next: add url to user/urls.py
+
+
+
+class ManagerUserView(generics.RetrieveUpdateAPIView):
+    """Manage the authenticated user"""
+    serializer_class = UserSerializer
+    # class variables for auth. (we'll use token auth.) and permission (just need to be logged in)
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    # add a get_object function to our api view
+        # usually you link a model to a view to get the instance of the model
+            # in this case we'll override the get_object and just return the auth. user
+
+    def get_object(self):
+        """Retrieve and return authenticated user"""
+        # when the get object is called, the request will have the user attached to it because of the auth. classes,
+            # which takes care of getting the authenticated user and assigning it to the request - django rest_framework feature
+        return self.request.user 
