@@ -19,11 +19,24 @@ from recipe import serializers
 class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     """Manage tags in the database"""
     # add the authentication & permission classes 
-        # requires that token auth. is used
-        authentication_classes = (TokenAuthentication,)
-        # requires that the user's auth. to use the api
-        permission_classes = (IsAuthenticated,)
-        # add the query set so when we're defining a list model mixin in the generic view set we
-            # need to provide the query set we want to return 
-        queryset = Tag.objects.all()
-        serializer_class = serializers.TagSerializer
+    # requires that token auth. is used
+    authentication_classes = (TokenAuthentication,)
+    # requires that the user's auth. to use the api
+    permission_classes = (IsAuthenticated,)
+    # add the query set so when we're defining a list model mixin in the generic view set we
+    # need to provide the query set we want to return 
+    queryset = Tag.objects.all()
+    serializer_class = serializers.TagSerializer
+
+    def get_queryset(self):
+        #overriding
+        """Return objects for the current authenticated user only""" 
+        #By the time the user enters this method we already know they're authenticated 
+            # and that an auth. token was used; otherwise they'd get an error
+        # When our List function & view set are invoked from a URL, get_queryset is called to retrieve the queryset
+            # this is where we can filter to only getting objects for the auth. user
+                # whatever's returned is displayed in the API
+        # don't do Tag.objects.all(); do queryset in case it's changed
+        # the request object should be passed to self as a class variable 
+        #   & the user should be assigned since it requires auth.
+        return self.queryset.filter(user=self.request.user).order_by('-name')
