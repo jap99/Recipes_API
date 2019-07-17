@@ -16,7 +16,7 @@ def create_user(**params):  # can pass in many params // dynamic list of args.  
    
 
 
-                                                                        """TEST CLASS"""         
+"""TEST CLASS"""         
 
 class PublicUserAPITests(TestCase):      
 
@@ -30,12 +30,16 @@ class PublicUserAPITests(TestCase):
             'name': 'Test name - jp'
         } 
         res = self.client.post(CREATE_USER_URL, payload) 
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)  """User created"""
+        """User created"""
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(**res.data)  
-        self.assertTrue(user.check_password(payload['password']))   """Correct password"""
-        self.assertNotIn('password', res.data)                      """Password not returned in API resonse"""
+        """Correct password"""
+        self.assertTrue(user.check_password(payload['password']))   
+        """Password not returned in API resonse"""
+        self.assertNotIn('password', res.data)                      
 
-    def test_if_user_exists(self):                                  """Don't create duplicate if user already exists"""
+    def test_if_user_exists(self): 
+        """Don't create duplicate if user already exists"""                                 
         payload = {
             'email': 'test@cleandev.com',
             'password': 'testpass',
@@ -44,21 +48,22 @@ class PublicUserAPITests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload) # second time creating user 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
  
-    def test_password_length(self):                                 """Should be greater than 5 characters"""
+    def test_password_length(self):   
+        """Should be greater than 5 characters"""                              
         payload = {
             'email': 'javid@cleandev.com',
             'password': 'pw'
         }
-        res = self.client.post(CREATE_USER_URL, payload)            
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)      """User not created""" 
+        res = self.client.post(CREATE_USER_URL, payload)    
+        """User not created"""         
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)      
         user_exists = get_user_model().objects.filter( 
         email=payload['email']
         ).exists() 
-        self.assertFalse(user_exists)                                       """User with that email doesn't exist"""
+        """User with that email doesn't exist"""
+        self.assertFalse(user_exists)                                       
 
 
 
 
-                                                                                """TEST CLASS"""
-
-
+"""TEST CLASS"""
