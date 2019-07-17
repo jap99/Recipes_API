@@ -14,6 +14,8 @@ urlpatterns = [
     # first: our api will be user/create, 
     # second: the view we wire the URL to, 
     # third: give it a name we can use when using django's reverse() lookup function
+        # give the same name that we use in our tests
     path('create/', views.CreateUserView.as_view(), name='create'),
+    path('token/', views.CreateTokenView.as_view(), name='token'),
 ] 
  # if path matches create/, we go to that view which will handle/render our API request
