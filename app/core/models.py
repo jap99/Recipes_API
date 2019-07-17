@@ -55,7 +55,7 @@ class Tag(models.Model):
             # if you delete the user just delete the tags also
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.cascade
+        on_delete=models.CASCADE,
     )
     
     def __str__(self):
