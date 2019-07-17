@@ -14,12 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 # import the serializers module
 from rest_framework import serializers
 
-
-
-
-
-
-
+ 
 
 # inherit since we're basing serializer from our model 
     # django has a built in serializer
@@ -36,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
             # we'll then retrieve it in our view & save it to a model
             # aka (the fields we want accessible to our api - either READ or WRITE)
         fields = ('email', 'password', 'name')
-        # fields - aka (the fields we'll accept when creating users) // must update if you need to add or remove fields
+        # fields - aka (the fields we'll accept when creating users) // must update if you need to add or remove fields later
         # allows us to configure a few extra settings in our model serializer
             # will be used to ensure the password's WRITE-ONLY & >= 5 characters
         # for the pw 'field' in 'fields'
@@ -50,12 +45,26 @@ class UserSerializer(serializers.ModelSerializer):
             # from the JSON data made in the HTTP POST
         return get_user_model().objects.create_user(**validated_data)
 
-
-
-
-
-
-
+    def update(self, instance, validated_data):
+        """Update the pw, setting the pw correctly, and return it"""
+        # need to pass in an instance & validated_data arg.
+            # instance - the model linked to our model instance linked to our model serializer; will be our User object
+            # validated_data - will be the fields that have gone through validation (in Meta) & are ready to update
+        # first, remove the pw from validated_data (dictionary pop)
+            # must provide a default value in case pw doesn't exist; so we set it to None
+            # pop - it's like GET except after it's retrieved we're removing password from the original dictionary
+                # unlike GET, we must provide the default value in case 'password' doesn't exist
+                # we also leave it as "None" since we give user the option to provide/update their pw
+        password = validated_data.pop('password', None)
+        # run update on the rest of our validated_data
+        user = super().update(instance, validated_data)
+        # super().update() calls the ModelSerializer's update function
+        #if user provided a pw then set and save it
+        if password:
+            user.set_password(password)
+            user.save()
+        return user 
+ 
 
 # Create our Auth token serializer - for the user auth. object
 
