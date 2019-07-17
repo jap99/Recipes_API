@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-# import 'abstract base user'
-# import 'base user manager'
-# import the permissions mix in
+
+# the recommended way to get settings from django's settings.py file
+    # can use it to get our auth settings model
+from django.conf import settings 
+    
 
 # the three above are required to extend the django user model while using some features that come with it
 
@@ -31,7 +33,6 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
 
  
 class User(AbstractBaseUser, PermissionsMixin): # create user model
-
     """Custom user model that supports using email instead of username"""
     email = models.EmailField(max_length=255, unique=True) # we want it unique so only user for one email
     name = models.CharField(max_length=255)
@@ -40,3 +41,25 @@ class User(AbstractBaseUser, PermissionsMixin): # create user model
     """Assign the user manager to the objects attribute"""
     objects = UserManager()
     USERNAME_FIELD = 'email' # by default the USERNAME_FIELD is username; now it's email
+
+
+
+class Tag(models.Model):
+    """The tag to be used for a recipe"""
+    name = models.CharField(max_length=255)
+    # assign the user foreign key
+    # will be a foreign key to User object, but instead of addressing the User object directly 
+        # we'll use best practice of retrieving auth. user model with 'from django.conf import settings'
+        # first arg = the model you want to base the foreign key off of
+        # second = specify what happens when to tags when we delete a user (since there's a dependency)
+            # if you delete the user just delete the tags also
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.cascade
+    )
+    
+    def __str__(self):
+        # adding string representation of the model
+        # return what you want the string rep. to be
+            # we want it to be the name; as shown in on model test
+        return self.name
