@@ -19,10 +19,7 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
         user = self.model(email=self.normalize_email(email), **extra_fields) # creates a new model.. passes the email first & then any extra fields we add
         user.set_password(password) # the correct way to pass a password
         user.save(using=self._db) # using=self._db <-- the way to do it to support multiple databases but it's good practice to keep it anyway
-
         return user # returns the user model that was just created
-
-
 
     def create_superuser(self, email, password):
         """Creates and saves a new superuser"""
@@ -30,14 +27,9 @@ class UserManager(BaseUserManager): # subclass of BaseUserManager - will overrid
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
-
         return user
 
-
-        
-
-
-
+ 
 class User(AbstractBaseUser, PermissionsMixin): # create user model
 
     """Custom user model that supports using email instead of username"""
@@ -45,8 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin): # create user model
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True) # determines if the user's active or not - in case deactivated
     is_staff = models.BooleanField(default=False)
-
     """Assign the user manager to the objects attribute"""
     objects = UserManager()
-
     USERNAME_FIELD = 'email' # by default the USERNAME_FIELD is username; now it's email

@@ -1,5 +1,5 @@
 # path - lets us define different paths in our app
-from django.urls import path
+from django.urls import path, include
 
 # import our view
 from user import views 
@@ -17,5 +17,6 @@ urlpatterns = [
         # give the same name that we use in our tests
     path('create/', views.CreateUserView.as_view(), name='create'),
     path('token/', views.CreateTokenView.as_view(), name='token'),
+    path('me/', views.ManageUserView.as_view(), name='me'),
 ] 
  # if path matches create/, we go to that view which will handle/render our API request
