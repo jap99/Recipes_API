@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 # import the tag and the serializer
-from core.models import Tag 
+from core.models import Tag, Ingredient
 from recipe import serializers
 
 
@@ -52,3 +52,21 @@ class TagViewSet(viewsets.GenericViewSet,
         # now we can pass in whatever mods. we want to do in our create process
         # we'll save & set the user to the authenticated user:
         serializer.save(user=self.request.user)
+
+
+# mixing.ListModelMixing -- support for listing ingredients
+class IngredientViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+        """ Manage ingredients in the database """
+        # class variables
+        authentication_classes = (TokenAuthentication,)
+        permission_classes = (IsAuthenticated,)
+        queryset = Ingredient.objects.all()
+        serializer_class = serializers.IngredientSerializer
+
+        # get only the user's ingredients 
+            # onrder by name
+        def get_queryset(self):
+            return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    # register this viewset with the ROUTER 
+        # so we can access the endpoint from the web
