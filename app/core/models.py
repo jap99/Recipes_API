@@ -13,7 +13,7 @@ from django.conf import settings
 class UserManager(BaseUserManager): # subclass of BaseUserManager - will override some functions to handle email address instead of username
 
     def create_user(self, email, password=None, **extra_fields): # we put None in case we want to create a user that isn't active
-        # **extra_fields -- takes any extra functions that are passed in and pass  them into extra fields so we can just add any additional
+        # **extra_fields -- takes any extra functions that are passed in and pass them into extra fields so we can just add any additional
             # fields that we use with our user models
         """Creates and saves a new user"""
         if not email:

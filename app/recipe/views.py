@@ -16,7 +16,11 @@ from recipe import serializers
 
 
 # create our viewset
-class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    # mixinsCreateModelMixin - adds the CREATE option // override the perform_create so you can assign
+        # the tag to the correct user
+class TagViewSet(viewsets.GenericViewSet, 
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin):
     """Manage tags in the database"""
     # add the authentication & permission classes 
     # requires that token auth. is used
@@ -40,3 +44,11 @@ class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         # the request object should be passed to self as a class variable 
         #   & the user should be assigned since it requires auth.
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+
+    # overriding from mixingsCreateModelMixin
+    def perform_create(self, serializer):
+        """ Create a new tag """
+        # now we can pass in whatever mods. we want to do in our create process
+        # we'll save & set the user to the authenticated user:
+        serializer.save(user=self.request.user)

@@ -21,4 +21,4 @@ urlpatterns = [
     path('api/user/', include('user.urls')),
     path('api/recipe', include('recipe.urls')),
 ]
-# identifies the user directory's/app's urls.py module
+# identifies the user directory/app's urls.py module

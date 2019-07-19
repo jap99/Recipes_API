@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
 # pull the host, username, password from ENVIRONMENT VARIABLES;
-    # let's use easily change our config. when we run our app on different servers & we don't need to modify our source code
+    # let's us easily change our config. when we run our app on different servers & we don't need to modify our source code
     # This is useful when running app in production since we can upload our Dockerfile to a service like AWS ECS, or Kubernetes,
         # and simply set our environment variables & our app should work
     'default': {
