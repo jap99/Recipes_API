@@ -66,3 +66,26 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name 
+
+class Recipe(models.Model):
+    # if we remove the user it'll remove the recipes too
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    time_minutes = models.IntegerField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    # user can add a link to the recipe (in case it's available online)
+    link = models.CharField(max_length=255, blank=True)
+    # if you have a char field & you want it optional, use blank=True instead of null so 
+        # when you create a new instance that field will be set to a blank string
+        # if it's null then you need to check if it's null, blank, or has a value (aka, may be extra complexity to check)
+    # you can remove the Ingredient from in between the ' and the other ' and instead just add the class name alone
+        # but to do this you would need to have the other classes set up and created in the correct order
+            # ie. for this case the Ingredient would need to be created above the Recipe class
+    ingredients = models.ManyToManyField('Ingredient')
+    tags = models.ManyToManyField('Tag')
+
+    sef __str__(self):
+        return self.title
