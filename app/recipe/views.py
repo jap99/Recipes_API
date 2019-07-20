@@ -8,7 +8,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 # import the tag and the serializer
-from core.models import Tag, Ingredient
+from core.models import Tag, Ingredient, Recipe
 from recipe import serializers
 
 
@@ -59,3 +59,15 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     # register this viewset with the ROUTER 
         # so we can access the endpoint from the web
  
+ # we'll allow user to create, update, & view details (not just create and update) so we use the ModelViewSet
+ class RecipeViewSet(viewsets.ModelViewSet):
+     """ Manage recipes in the db """
+    serializer_class = serializers.RecipeSerializer
+    queryset = Recipe.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        # limit to the auth. user
+        return self.queryset.filter(user=self.request.user) 
+    # now, the make our recipe work we need to add it to the URL 
