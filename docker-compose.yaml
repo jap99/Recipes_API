@@ -11,7 +11,7 @@ services:
     command: >
      sh -c "python manage.py wait_for_db && 
             python manage.py migrate &&
-            python manage.py runserver 0.0.0.0:8000" # call the wait_for_db cmd by calling manage.py; once db is available it'll run the runserver cmd to start the server, but first we'll run the db migrations on our db so it'll create any required tables for our app - good idea to run migrations first so we don't run into issues
+            python manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db # when ur in the app service, u can connect to the hostname db & it'll connect to the container running on our db service
       - DB_NAME=app # must equal our postgres db - which is 'app'
@@ -24,8 +24,8 @@ services:
 
   db:
     image: postgres:10-alpine 
-    volumes:
-      - "./local/path/to/postgres/data:/var/lib/postgresql/data"
+    # volumes:
+    #   - "./local/path/to/postgres/data:/var/lib/postgresql/data"
     # ports:
     #   - "5432:5432"
      # gets the postgres image on dockerhub that has the tag 10-alpine

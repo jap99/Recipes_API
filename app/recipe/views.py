@@ -4,12 +4,9 @@
         # we're able to pull in different parts of a view for our app
             # we only want the LIST function (not create, update, or delete functions)
 from rest_framework import viewsets, mixins 
-
 # to auth. the requests
 from rest_framework.authentication import TokenAuthentication
-
 from rest_framework.permissions import IsAuthenticated
-
 # import the tag and the serializer
 from core.models import Tag, Ingredient
 from recipe import serializers
@@ -17,7 +14,7 @@ from recipe import serializers
 
 
 
-class BaseRecipeAttrViewSet(viewsets.GenericViewSet, mixings.ListModelMixin, mixins.CreateModelMixin):
+class BaseRecipeAttrViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
      # add the authentication & permission classes 
     # requires that token auth. is used
     authentication_classes = (TokenAuthentication,)
@@ -44,7 +41,6 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet, mixings.ListModelMixin, mix
         # we'll save & set the user to the authenticated user:
         serializer.save(user=self.request.user)
 
-
 # create our viewset
     # mixinsCreateModelMixin - adds the CREATE option // override the perform_create so you can assign
         # the tag to the correct user
@@ -55,13 +51,11 @@ class TagViewSet(BaseRecipeAttrViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer 
     
-
 # mixing.ListModelMixing -- support for listing ingredients
 class IngredientViewSet(BaseRecipeAttrViewSet):
         """ Manage ingredients in the database """ 
         queryset = Ingredient.objects.all()
         serializer_class = serializers.IngredientSerializer
- 
     # register this viewset with the ROUTER 
         # so we can access the endpoint from the web
  
