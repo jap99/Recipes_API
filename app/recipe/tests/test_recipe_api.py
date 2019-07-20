@@ -3,10 +3,28 @@ from django.test import TestCase
 from django.urls import reverse 
 from rest_framework import test, status
 from rest_framework.test import APIClient
-from core.models import Recipe 
-from recipe.serializers import RecipeSerializer
+from core.models import Recipe, Tag, Ingredient
+from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
 
 RECIPES_URL = reverse('recipe:recipe-list')
+# requires the id of the recipe we want to get the details of 
+# ---- /api/recipe/recipes
+# ---- /api/recipe/recipes/1/
+def create_recipe_detail_url(recipe_id):
+    # the name of the url the router will create for the viewset
+        # you can pass in a list of arguments into the reverse method
+    return reverse('recipe:recipe-detail', args=[recipe_id])
+
+
+""" CREATE SETUP FUNCTIONS """
+
+def create_sample_tag(user, name='Main Course'):
+    """ Create and return sample tag """
+    return Tag.objects.create(user=user, name=name)
+
+def create_sample_ingredient(user, name='Cinnamon'):
+    """ Create and return sample ingredient """
+    return Ingredient.objects.create(user=user, name=name)
 
 # **params passes the argument into a dictionary
 def create_sample_recipe(user, **params):
@@ -73,3 +91,17 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data, serializer.data)
         
+    def test_you_can_view_a_recipes_details(self):
+        recipe = create_sample_recipe(user=self.user)
+        # add a tag and ingredient to the recipe
+            # this is how you add an item to a many to many field
+                # we won't pass in a name; just use the sample name
+        recipe.tags.add(create_sample_tag(user=self.user))
+        recipe.ingredients.add(create_sample_ingredient(user=self.user))
+        # generate the url we'll call --- creates URL for the recipe we pass in
+        url = create_recipe_detail_url(recipe.id)
+        res = self.client.get(url)
+        # we expect it to be serialized - create one & pass in our response
+            # serialize a single object
+        serializer = RecipeDetailSerializer(recipe)
+        self.assertEqual(res.data, serializer.data)
