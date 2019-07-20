@@ -14,6 +14,7 @@ router = DefaultRouter()
 # Registers our viewSet with our Router
 router.register('tags', views.TagViewSet)
 router.register('ingredients', views.IngredientViewSet)
+router.register('recipes', views.RecipeViewSet)
 
 # identify the app_name
     # so when using the reverse() it can lookup the right URLs

@@ -59,9 +59,9 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     # register this viewset with the ROUTER 
         # so we can access the endpoint from the web
  
- # we'll allow user to create, update, & view details (not just create and update) so we use the ModelViewSet
- class RecipeViewSet(viewsets.ModelViewSet):
-     """ Manage recipes in the db """
+# we'll allow user to create, update, & view details (not just create and update) so we use the ModelViewSet
+class RecipeViewSet(viewsets.ModelViewSet):
+    """ Manage recipes in the db """
     serializer_class = serializers.RecipeSerializer
     queryset = Recipe.objects.all()
     authentication_classes = (TokenAuthentication,)
