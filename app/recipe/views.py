@@ -55,7 +55,9 @@ class TagViewSet(viewsets.GenericViewSet,
 
 
 # mixing.ListModelMixing -- support for listing ingredients
-class IngredientViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class IngredientViewSet(viewsets.GenericViewSet, 
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
         """ Manage ingredients in the database """
         # class variables
         authentication_classes = (TokenAuthentication,)
@@ -70,3 +72,9 @@ class IngredientViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
     # register this viewset with the ROUTER 
         # so we can access the endpoint from the web
+
+
+        def perform_create(self, serializer):
+            """ Create new ingredient """
+            serializer.save(user=self.request.user) 
+            #by now the tests should pass and you should be able to load the endpoint in a browser
