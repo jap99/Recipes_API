@@ -68,6 +68,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        # limit to the auth. user
+        # get recipes of the auth. user
         return self.queryset.filter(user=self.request.user) 
     # now, the make our recipe work we need to add it to the URL 
+
+
+    # the function called to get the serializer class for a particular request; 
+    #   you'll use this function to change the serializer class for the different actions available on the RecipeViewSet
+    #       There are multiple actions available in the ModelViewSet - ie) List - we just want to return the default, 
+    #           Retrieve - we want to return the RecipeDetailSerializer so when we call Retrieve it uses that serializer & not the default one
+    def get_serializer_class(self):
+        """ Return the correct serializer class """
+        # check the self.action class variable 
+        if self.action == 'retrieve':
+            return serializers.RecipeDetailSerializer
+        return self.serializer_class

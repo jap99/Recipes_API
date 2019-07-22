@@ -16,6 +16,8 @@ def create_recipe_detail_url(recipe_id):
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
 
+
+
 """ CREATE SETUP FUNCTIONS """
 
 def create_sample_tag(user, name='Main Course'):
@@ -40,6 +42,8 @@ def create_sample_recipe(user, **params):
     return r
 
 
+
+
 """ PUBLIC RECIPE API TESTS """
 
 class PublicRecipeAPITests(TestCase):
@@ -50,6 +54,8 @@ class PublicRecipeAPITests(TestCase):
     def test_that_auth_is_required_to_create_a_recipe(self):
         res = self.client.get(RECIPES_URL) 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 
 
 """ PRIVATE RECIPE API TESTS """

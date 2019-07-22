@@ -68,6 +68,7 @@ class Ingredient(models.Model):
         return self.name 
 
 class Recipe(models.Model):
+    # these fields will be in the table
     # if we remove the user it'll remove the recipes too
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
