@@ -1,9 +1,14 @@
+# to add custom actions to your viewset
+from rest_framework.decorators import action 
+# for returning a custom response
+from rest_framework.response import response 
 # the views we'll create is from a combination of generic view set & model mixin
     # we're going to base it off the generic view set
         # specifically, we'll use the list model mixin
         # we're able to pull in different parts of a view for our app
             # we only want the LIST function (not create, update, or delete functions)
-from rest_framework import viewsets, mixins 
+    # import 'status' to generate a status for our custom action (i'm adding this for uploading the image to a recipe)
+from rest_framework import viewsets, mixins, status
 # to auth. the requests
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
