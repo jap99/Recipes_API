@@ -140,7 +140,7 @@ class PrivateRecipeAPITests(TestCase):
         payload = {'title': 'Spaghetti Carbonara', 'time_minutes': 25, 'price': 5.00 }
         url = create_recipe_detail_url(recipe.id)
         self.client.put(url, payload)
-        recipe.refresh_from_db
+        recipe.refresh_from_db()
         self.assertEqual(recipe.title, payload['title'])
         self.assertEqual(recipe.time_minutes, payload['time_minutes'])
         self.assertEqual(recipe.price, payload['price'])

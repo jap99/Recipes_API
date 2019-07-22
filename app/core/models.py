@@ -1,3 +1,6 @@
+import uuid 
+# will use os.path to create a valid path for our file destination
+import os 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 # the recommended way to get settings from django's settings.py file
@@ -5,6 +8,23 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.conf import settings 
 # the three above are required to extend the django user model while using some features that come with it
 # we can then create our user manager class (provides the helper functions to create a user or super user)
+
+
+def create_recipe_image_file_path(instance, filename):
+    """ Generate file path for new recipe image """
+    # splits name into items separated by a .
+    # [-1] return the last item in the list (aka the extension)
+    ext = filename.split('.')[-1]
+    # makes string, the file name 
+    filename = f'{uuid.uuid4()}.{ext}'
+    # join it to the destination path we want to store the file 
+        # join lets you join 2 strings to create a valid path
+    return os.path.join('uploads/recipe', filename)
+
+
+
+
+""" MODEL CLASSES """
 
 class UserManager(BaseUserManager): # subclass of BaseUserManager - will override some functions to handle email address instead of username
 
@@ -87,6 +107,8 @@ class Recipe(models.Model):
             # ie. for this case the Ingredient would need to be created above the Recipe class
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    # don't put () at end of create_recipe_image_file_path because we don't want to call the function; just want to pass a reference to it so it's called when needed by django
+    image = models.ImageField(null=True, upload_to=create_recipe_image_file_path)
 
     def __str__(self):
         return self.title
