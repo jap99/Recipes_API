@@ -111,3 +111,39 @@ class PrivateRecipeAPITests(TestCase):
             # serialize a single object
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
+
+    def test_partial_update_on_recipe(self):
+        """ Test with PATCH """
+        recipe = create_sample_recipe(user=self.user)
+        recipe.tags.add(create_sample_tag(user=self.user))
+        # get ready to replace the tag
+        new_tag = create_sample_tag(user=self.user, name='Curry')
+        payload = {'title': 'CTM', 'tags': [new_tag.id] }
+        url = create_recipe_detail_url(recipe.id)
+        self.client.patch(url, payload)
+        # retrieve the updated value from the database
+        # need to refresh
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.title, payload['title'])
+        # get all the tags linked to the recipe
+        tags = recipe.tags.all()
+        # there should only be one tag
+        self.assertEqual(len(tags), 1)
+        # the new tags should be in the tags we retrieved
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_on_recipe(self):
+        """ Test with PUT """
+        # if you exclude fields in the payload; those excluded fields won't be in the db when you update the db
+        recipe = create_sample_recipe(user=self.user)
+        recipe.tags.add(create_sample_tag(user=self.user))
+        payload = {'title': 'Spaghetti Carbonara', 'time_minutes': 25, 'price': 5.00 }
+        url = create_recipe_detail_url(recipe.id)
+        self.client.put(url, payload)
+        recipe.refresh_from_db
+        self.assertEqual(recipe.title, payload['title'])
+        self.assertEqual(recipe.time_minutes, payload['time_minutes'])
+        self.assertEqual(recipe.price, payload['price'])
+        # check the tags assigned length is zero 
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 0)
