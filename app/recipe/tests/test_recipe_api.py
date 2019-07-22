@@ -1,3 +1,9 @@
+# to test our upload image feature - tempfile (with python to generate temp files)
+import tempfile 
+# for checking if files exist on the system & creating paths
+import os
+# our Pillow requirement - lets us create test images to upload to our API 
+from PIL import Image 
 from django.contrib.auth import get_user_model
 from django.test import TestCase 
 from django.urls import reverse 
@@ -14,6 +20,11 @@ def create_recipe_detail_url(recipe_id):
     # the name of the url the router will create for the viewset
         # you can pass in a list of arguments into the reverse method
     return reverse('recipe:recipe-detail', args=[recipe_id])
+
+def create_upload_image_url(recipe_id):
+    # will need to recipe id to upload an image so we'll need to pass it to the reverse function 
+        # recipe-upload-image is the name we'll give our endpoint
+    return reverse('recipe:recipe-upload-image', args=[recipe_id])
 
 
 
@@ -147,3 +158,50 @@ class PrivateRecipeAPITests(TestCase):
         # check the tags assigned length is zero 
         tags = recipe.tags.all()
         self.assertEqual(len(tags), 0)
+
+
+
+""" IMAGE TESTS """
+
+class RecipeImageUploadTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user('user@cleandev.com', 'testpass123')
+        self.client.force_authenticate(self.user)
+        self.recipe = create_sample_recipe(user=self.user)
+
+    def tearDown(self):
+        # makes sure our file system's kept clean after our tests, removes all test files we create, & removes images
+        self.recipe.image.delete()
+
+    def test_uploading_valid_image_to_recipe_succeeds(self):
+        url = create_upload_image_url(self.recipe.id)
+        # create a named temp file on the system that we can write to at a random location (usually in the /temp)
+            # (we'll write an image to that file, then we'll upload via HTTP POST)
+            # then give it a suffix (aka the extension we want to use)
+                # add 'as ntf' else it'll return a file without a name but we want one so we can create one so we can
+                    # pass it to our upload_to function of the Recipe's image property
+                        # then, when you're out of the 'with' aka the context manager it'll auto. remove that file
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as ntf:
+            # just create a black square 10 x 10 pixels
+            img = Image.new('RGB', (10, 10))
+            # save to the ntf file, in jpg format
+            img.save(ntf, format='JPEG')
+            # seeking will be done to the end of the file, so if you were to start reading you'd start reading at the end of the file
+            # seek sets a pointer to the beginning of the file
+            ntf.seek(0)
+            # tell django we want to make a multipart form request - aka a form that consists of data (by default it's a form that consists of json)
+            res = self.client.post(url, {'image': ntf}, format='multipart')
+        self.recipe.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # ensure the image is in the response (the path to the image should be accessible)
+        self.assertIn('image', res.data)
+        # ensure the path assigned to the image exists in the file system 
+        self.assertTrue(os.path.exists(self.recipe.image.path))
+
+    def test_uploading_bad_image_is_not_uploaded_successfully(self):
+        url = create_upload_image_url(self.recipe.id)
+        # pass in something other than an image
+        res = self.client.post(url, {'image': 'notimage'}, format='multipart')
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
