@@ -136,7 +136,7 @@ MEDIA_URL = '/media/'
     # tells django where to store the media files & static files
         # these are the paths we created in our Dockerfile configurations as part of our build process
 MEDIA_ROUTE = '/vol/web/media'
-# all the css, js 
+# all the css, js
 STATIC_ROUTE = '/vol/web/static'
 
 AUTH_USER_MODEL = 'core.User'
